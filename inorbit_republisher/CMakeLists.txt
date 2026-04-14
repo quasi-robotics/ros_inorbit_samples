@@ -1,10 +1,4 @@
-install(
-  FILES
-    test/sample_data/config.yaml
-  DESTINATION share/${PROJECT_NAME}/test/sample_data
-)
+cmake_minimum_required(VERSION 3.16)
+project(inorbit_republisher)
 
-install(
-  DIRECTORY test/sample_data/hardcodedRosbag/
-  DESTINATION share/${PROJECT_NAME}/test/sample_data/hardcodedRosbag
-)
+
