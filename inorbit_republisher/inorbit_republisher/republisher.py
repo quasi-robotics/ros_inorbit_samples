@@ -69,7 +69,7 @@ def main(args = None):
     rclpy.init(args=args)
     node = rclpy.create_node('inorbit_republisher')
     # Declares the "config" parameter, it contains the path of the config file
-    node.declare_parameter('config')
+    node.declare_parameter('config', rclpy.Parameter.Type.STRING)
     # Read republisher configuration from the 'config_file' or 'config' parameter
     # TODO(adamantivm) Error handling and schema checking
     if node.has_parameter('config'):
@@ -117,7 +117,7 @@ def main(args = None):
 
         # Prepare callback to relay messages through InOrbit custom data
         def callback(msg, repub=repub):
-
+            # node.get_logger().debug(f"Received message on {repub['topic']}")
             for mapping in repub['mappings']:
                 key = mapping['out']['key']
                 val = None
@@ -163,10 +163,12 @@ def main(args = None):
 
         in_topic = repub['topic']
         # Reads QoS from the topic settings
-        in_qos = getattr(repub, 'qos', 10)
-
+        in_qos_depth = repub.get('qos', 10)
+        in_qos_reliability = repub.get('qos_reliability', 0)
+        in_qos_durability = repub.get('qos_durability', 0)
+        node.get_logger().info(f"Subscribing to {in_topic} with QoS depth={in_qos_depth}, reliability={in_qos_reliability}, durability={in_qos_durability}")
         # subscribe
-        subs[in_topic] = node.create_subscription(msg_class, in_topic, callback, in_qos)
+        subs[in_topic] = node.create_subscription(msg_class, in_topic, callback, qos_profile=rclpy.QoSProfile(depth=in_qos_depth, reliability=in_qos_reliability, durability=in_qos_durability))
 
     # Set-up static publishers
     static_publishers = config.get('static_publishers', ())
@@ -223,8 +225,12 @@ Extracts several values from a given nested msg field and returns a dictionary o
 # to log warnings inside
 def extract_values_as_dict(msg, mapping, node):
     values = {}
-    base_getter_fn = attrgetter(mapping['field'])
-    base_value = base_getter_fn(msg)
+    base_field_name = mapping['field']
+    if base_field_name:
+        base_getter_fn = attrgetter(base_field_name)
+        base_value = base_getter_fn(msg)
+    else:
+        base_value = msg
     fields = mapping.get('mapping_options', {}).get('fields')
     for field in fields:
         getter_fn = attrgetter(field)
