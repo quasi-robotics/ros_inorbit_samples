@@ -1,0 +1,85 @@
+republishers:
+# - topic: "/map_metadata"
+#   latched: true
+#   msg_type: "nav_msgs/msg/MapMetaData"
+#   mappings:
+#   - field: "resolution"
+#     mapping_type: "single_field"
+#     out:
+#       topic: "/inorbit/map_res_test"
+#       key: "map_resolution"
+
+- topic: "/current_states"
+  qos: 5
+  qos_reliability: 2  # reliable
+  qos_durability: 2   # transient_local
+  msg_type: "quasi_msgs/msg/CurrentState"
+  mappings:
+  - mapping_type: "single_field"
+    field: "wheel_power"
+    out:
+      topic: "/inorbit/custom_data"
+      key: "wheels_power"
+
+- topic: "/battery_state"
+  qos: 5
+  qos_reliability: 2  # best_effort
+  qos_durability: 2   # volatile
+  msg_type: "sensor_msgs/msg/BatteryState"
+  mappings:
+  - mapping_type: "json_of_fields"
+    field: ""  # empty field means the whole message
+    mapping_options:
+      fields: ["voltage", "charge", "percentage", "current", "temperature", "power_supply_status", "power_supply_health", "capacity"]
+    out:
+      topic: "/inorbit/custom_data"
+      key: "battery_state"
+
+- topic: "/cart_manager/waypoints"
+  qos: 5
+  qos_reliability: 1  # reliable
+  qos_durability: 1   # transient_local
+  msg_type: "quasi_cart_msgs/msg/Waypoints"
+  mappings:
+  - field: "waypoints"
+    mapping_type: "array_of_fields"
+    mapping_options:
+      fields: ["index", "name"]
+    out:
+      topic: "/inorbit/custom_data"
+      key: "waypoints"
+
+- topic: "/cloud_connect/routes_updated"
+  qos: 5
+  qos_reliability: 1  # reliable
+  qos_durability: 1   # transient_local
+  msg_type: "quasi_cart_msgs/msg/Routes"
+  mappings:
+  - field: "routes"
+    mapping_type: "array_of_fields"
+    mapping_options:
+      fields: ["id", "name", "waypoints_count"]
+    out:
+      topic: "/inorbit/custom_data"
+      key: "routes"
+
+# static_publishers:
+# # - value_from:
+# #     package_version: "rospy"
+# #   out:
+# #     topic: "/inorbit/custom_data/0"
+# #     key: "rospy_version"
+# # - value_from:
+# #     package_version: "inorbit_republisher"
+# #   out:
+# #     topic: "/inorbit/custom_data/0"
+# #     key: "inorbit_republisher_version"
+# - value_from:
+#     environment_variable: "PYTHONPATH"
+#   out:
+#     topic: "/inorbit/custom_data/static"
+#     key: "python_path"
+# - value: "let's republish in orbit"
+#   out:
+#     topic: "/inorbit/custom_data/static"
+#     key: "greeting"
