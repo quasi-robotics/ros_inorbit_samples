@@ -63,23 +63,17 @@ republishers:
       topic: "/inorbit/custom_data"
       key: "routes"
 
-# static_publishers:
-# # - value_from:
-# #     package_version: "rospy"
-# #   out:
-# #     topic: "/inorbit/custom_data/0"
-# #     key: "rospy_version"
-# # - value_from:
-# #     package_version: "inorbit_republisher"
-# #   out:
-# #     topic: "/inorbit/custom_data/0"
-# #     key: "inorbit_republisher_version"
-# - value_from:
-#     environment_variable: "PYTHONPATH"
-#   out:
-#     topic: "/inorbit/custom_data/static"
-#     key: "python_path"
-# - value: "let's republish in orbit"
-#   out:
-#     topic: "/inorbit/custom_data/static"
-#     key: "greeting"
+- topic: "/cart_manager/navigation_result"
+  qos: 5
+  qos_reliability: 1  # reliable
+  qos_durability: 2   # volatile
+  msg_type: "quasi_cart_msgs/msg/NavigationResult"
+  mappings:
+  - mapping_type: "json_of_fields"
+    field: ""  # empty field means the whole message
+    mapping_options:
+      fields: ["waypoint_name", "result_code", "error_code", "error_msg", "navigation_duration", "end_time", "distance", "route"]
+    out:
+      topic: "/inorbit/custom_data"
+      key: "navigation_result"
+
