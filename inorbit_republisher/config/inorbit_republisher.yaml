@@ -72,7 +72,7 @@ republishers:
   - mapping_type: "json_of_fields"
     field: ""  # empty field means the whole message
     mapping_options:
-      fields: ["waypoint_name", "result_code", "error_code", "error_msg", "navigation_duration", "end_time", "distance", "route"]
+      fields: ["waypoint_name", "result_code", "error_code", "error_msg", "end_time", "distance", "route"]
     out:
       topic: "/inorbit/custom_data"
       key: "navigation_result"
