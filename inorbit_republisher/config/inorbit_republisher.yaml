@@ -77,3 +77,16 @@ republishers:
       topic: "/inorbit/custom_data"
       key: "navigation_result"
 
+- topic: "/robot_status"
+  qos: 5
+  qos_reliability: 1  # reliable
+  qos_durability: 1   # transient_local
+  msg_type: "quasi_cart_msgs/msg/RobotStatus"
+  mappings:
+  - mapping_type: "json_of_fields"
+    field: ""
+    mapping_options:
+      fields: ["status"]
+    out:
+      topic: "/inorbit/custom_data"
+      key: "robot_status"
