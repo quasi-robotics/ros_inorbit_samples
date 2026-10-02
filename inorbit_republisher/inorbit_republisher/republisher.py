@@ -26,6 +26,8 @@
 # ROS topics into InOrbit key/value custom data topics.
 
 import json
+import math
+
 import rclpy
 from rosidl_runtime_py.utilities import get_message
 import yaml
@@ -240,6 +242,8 @@ def extract_values_as_dict(msg, mapping, node):
             # Convert them to milliseconds
             if isinstance(val, Time):
                 val = rclpy.time.Time.from_msg(val).nanoseconds / 1000000
+            if isinstance(val, float) and not math.isfinite(val):
+                continue
             # TODO(diegobatt): Make it possible to use a different key than the field
             values[field] = val
         except AttributeError as e:
